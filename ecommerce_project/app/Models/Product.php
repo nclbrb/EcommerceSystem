@@ -3,21 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'price',
-        'stock',
-        'image'
-    ];
+    protected $fillable = ['name', 'description', 'price', 'stock', 'image'];
 
-    // If your product is linked to orders, you might have a relationship.
-    // Adjust this relationship as needed.
-    public function orders()
+    public function orderDetails(): BelongsToMany
     {
-        return $this->belongsToMany(Order::class);
+        return $this->hasMany(OrderDetail::class, 'product_id');
     }
 }
