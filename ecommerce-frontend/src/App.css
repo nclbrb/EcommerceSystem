@@ -13,3 +13,30 @@
 .carousel-indicators .active {
   background-color: orange;
 }
+
+/* Ensure the html and body use full height */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Flex container to push footer to the bottom */
+.min-vh-100 {
+  min-height: 100vh;
+}
+
+/* Main section should grow to fill available space */
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+/* Ensure footer does not shrink */
+footer {
+  flex-shrink: 0;
+}
+
+/* Override any dimmed styles for header links */
+.navbar .nav-link, .navbar-brand {
+  color: #fff !important;
+}
