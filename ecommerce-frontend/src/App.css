@@ -1,0 +1,15 @@
+/* Arrow Controls: Make the arrows orange */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: brightness(0) saturate(100%) invert(39%) sepia(95%) saturate(3594%) hue-rotate(4deg) brightness(95%) contrast(107%);
+}
+
+/* Slide Indicators: Make all indicators orange */
+.carousel-indicators [data-bs-target] {
+  background-color: orange;
+}
+
+/* Ensure the active indicator is clearly visible */
+.carousel-indicators .active {
+  background-color: orange;
+}
