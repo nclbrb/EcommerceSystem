@@ -6,24 +6,32 @@ import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 
 function LoginPage() {
-  const [email, setEmail]       = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage]   = useState(null);
-  const [variant, setVariant]   = useState('');
-  const { login }               = useContext(AuthContext);
-  const navigate              = useNavigate();
+  const [message, setMessage] = useState(null);
+  const [variant, setVariant] = useState('');
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/login', { email, password });
-      // Assume the response contains user details (e.g., name, email) along with token.
-      // You might need to adjust according to your API response.
-      login(response.data.user, response.data.token);
-      setMessage(response.data.message);
+
+      // Extract user, token, and role from response
+      const { user, token, role, message } = response.data;
+
+      // Store in AuthContext
+      login(user, token, role);
+      setMessage(message);
       setVariant('success');
-      // Redirect after login
-      navigate('/');
+
+      // Redirect based on role
+      if (role === 'employee') {
+        navigate('/admin-dashboard'); // Example: employee dashboard
+      } else {
+        navigate('/'); // Example: customer dashboard
+      }
     } catch (error) {
       console.error(error);
       setMessage('Login failed. Please check your credentials.');
