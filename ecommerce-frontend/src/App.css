@@ -13,3 +13,21 @@
 .carousel-indicators .active {
   background-color: orange;
 }
+/* Hover effect for Product Cards */
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px); /* Slightly elevate the card */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+/* Hover effect for Cart Cards */
+.cart-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cart-card:hover {
+  transform: translateY(-5px); /* Slightly elevate the card */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
