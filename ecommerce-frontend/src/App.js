@@ -7,6 +7,7 @@ import LoginPage from './Components/LoginPage';
 import RegisterPage from './Components/RegisterPage';
 import ProductList from './Components/ProductList';
 import Cart from './Components/Cart';
+import EmployeeDashboard from './Components/EmployeeDashboard';
 import CheckoutPage from './Components/CheckoutPage';
 import OrderConfirmationPage from './Components/OrderConfirmationPage';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
@@ -195,6 +196,7 @@ function App() {
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
+                 <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
               </Routes>
             </main>
             <Footer />
