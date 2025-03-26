@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from 'react';
+// src/Components/ProductList.js
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { AuthContext } from '../contexts/AuthContext';
+import { CartContext } from '../contexts/CartContext';
 
-const ProductList = ({ cart, setCart }) => {
+const ProductList = () => {
+  const { user } = useContext(AuthContext);
+  const { cart, setCart } = useContext(CartContext);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [search, setSearch] = useState('');
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
+  const [search, setSearch]     = useState('');
+  const [message, setMessage]   = useState('');
 
-  // Fetch products from the API
+  // Fetch products from API
   useEffect(() => {
     axios
       .get('http://127.0.0.1:8000/api/products')
@@ -22,30 +28,35 @@ const ProductList = ({ cart, setCart }) => {
       });
   }, []);
 
-  // Search functionality
+  // Handle search input
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };
 
-  // Add to Cart function
+  // Add product to cart with feedback
   const handleAddToCart = (product) => {
-    const existingProductIndex = cart.findIndex(item => item.id === product.id);
-
-    if (existingProductIndex >= 0) {
-      // If the product exists in the cart, increment the quantity
-      const updatedCart = [...cart];
-      updatedCart[existingProductIndex].quantity += 1;
-      setCart(updatedCart);
-    } else {
-      // If product does not exist, add it with quantity 1
-      const newProduct = { ...product, quantity: 1 };
-      setCart([...cart, newProduct]);
+    if (!user) {
+      alert("Please login to add products to your cart.");
+      return;
     }
+
+    const existingProductIndex = cart.findIndex(item => item.id === product.id);
+    let updatedCart = [];
+    if (existingProductIndex >= 0) {
+      updatedCart = [...cart];
+      updatedCart[existingProductIndex].quantity += 1;
+    } else {
+      updatedCart = [...cart, { ...product, quantity: 1 }];
+    }
+    setCart(updatedCart);
+    setMessage(`${product.name} added to cart!`);
+    setTimeout(() => setMessage(''), 2000);
   };
 
   if (loading) return <div className="alert alert-info">Loading products...</div>;
   if (error) return <div className="alert alert-danger">Error: {error}</div>;
 
+  // Filter products based on search input
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -63,7 +74,7 @@ const ProductList = ({ cart, setCart }) => {
           onChange={handleSearch}
         />
       </div>
-
+      {message && <div className="alert alert-success">{message}</div>}
       <div className="row">
         {filteredProducts.map((product) => (
           <div className="col-md-4 mb-4" key={product.id}>
@@ -85,7 +96,7 @@ const ProductList = ({ cart, setCart }) => {
                 </p>
                 <button
                   className="btn btn-primary mt-auto"
-                  onClick={() => handleAddToCart(product)} // Add product to cart
+                  onClick={() => handleAddToCart(product)}
                 >
                   Add to Cart
                 </button>

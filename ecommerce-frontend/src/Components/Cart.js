@@ -1,31 +1,30 @@
-import React from 'react';
-import { Link } from 'react-router-dom'; // for linking to checkout page
+// src/Components/Cart.js
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { CartContext } from '../contexts/CartContext';
+import { AuthContext } from '../contexts/AuthContext';
 
-const Cart = ({ cart, setCart }) => {
-  // Remove item from cart
+const Cart = () => {
+  const { cart, setCart } = useContext(CartContext);
+  const { user } = useContext(AuthContext);
+
   const handleRemoveFromCart = (index) => {
-    const newCart = cart.filter((_, i) => i !== index); // Filter out the item at the given index
-    setCart(newCart); // Update the cart in the state
+    const updatedCart = cart.filter((_, i) => i !== index);
+    setCart(updatedCart);
   };
 
-  // Clear all items from cart
   const handleClearCart = () => {
-    setCart([]); // Clear the cart by setting an empty array
+    setCart([]);
   };
 
-  // Calculate the total price of the cart
   const totalPrice = Array.isArray(cart)
     ? cart.reduce((total, product) => {
         const price = parseFloat(product.price);
         return total + (isNaN(price) ? 0 : price * product.quantity);
       }, 0)
     : 0;
-
-  // Calculate the total number of items in the cart
   const totalItems = Array.isArray(cart) ? cart.reduce((sum, product) => sum + product.quantity, 0) : 0;
-
-  // Ensure totalPrice is a valid number before calling .toFixed
   const formattedTotalPrice = totalPrice && !isNaN(totalPrice) ? totalPrice.toFixed(2) : '0.00';
 
   return (
@@ -35,12 +34,12 @@ const Cart = ({ cart, setCart }) => {
         <div className="alert alert-warning">Your cart is empty.</div>
       ) : (
         <div className="row">
-          {Array.isArray(cart) && cart.length > 0 &&
+          {Array.isArray(cart) &&
             cart.map((product, index) => (
               <div className="col-md-4 mb-4" key={product.id}>
                 <div className="card d-flex h-100 shadow-sm cart-card">
                   <img
-                    src={product.image || '/images/placeholder.png'} // Fallback image
+                    src={product.image || '/images/placeholder.png'}
                     alt={product.name}
                     className="card-img-top"
                     height="200"
@@ -53,15 +52,14 @@ const Cart = ({ cart, setCart }) => {
                     </p>
                     <button
                       className="btn btn-danger mt-auto"
-                      onClick={() => handleRemoveFromCart(index)} // Remove item from cart
+                      onClick={() => handleRemoveFromCart(index)}
                     >
                       Remove from Cart
                     </button>
                   </div>
                 </div>
               </div>
-            ))
-          }
+            ))}
         </div>
       )}
       {Array.isArray(cart) && cart.length > 0 && (

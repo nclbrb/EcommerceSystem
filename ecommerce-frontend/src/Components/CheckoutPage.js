@@ -1,40 +1,42 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Used to navigate after successful checkout
+// src/Components/CheckoutPage.js
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { CartContext } from '../contexts/CartContext';
 
-const CheckoutPage = ({ cart, setCart }) => {
+const CheckoutPage = () => {
+  const { cart, setCart } = useContext(CartContext);
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [payment, setPayment] = useState('');
-  const navigate = useNavigate(); // Used for navigation after successful checkout
+  const navigate = useNavigate();
 
   // Calculate the total price of the cart
   const totalPrice = Array.isArray(cart)
     ? cart.reduce((total, product) => {
-        const price = parseFloat(product.price); // Ensure it's a valid number
-        return total + (isNaN(price) ? 0 : price);
+        const price = parseFloat(product.price);
+        return total + (isNaN(price) ? 0 : price * product.quantity);
       }, 0)
     : 0;
 
   const formattedTotalPrice = totalPrice && !isNaN(totalPrice) ? totalPrice.toFixed(2) : '0.00';
 
-  // Handle form submission
+  // Handle checkout submission
   const handleCheckout = (e) => {
     e.preventDefault();
 
-    // You can add validation for the form data if needed
     if (!name || !address || !payment) {
       alert('Please fill all the fields.');
       return;
     }
 
-    // Simulate payment process
+    // Simulate a payment process
     alert(`Checkout successful! Thank you for your purchase using ${payment}.`);
 
-    // Clear cart after checkout
+    // Clear the cart after checkout
     setCart([]);
 
-    // Redirect to the Order Confirmation page
+    // Redirect to the order confirmation page
     navigate('/order-confirmation');
   };
 
@@ -91,7 +93,7 @@ const CheckoutPage = ({ cart, setCart }) => {
           <ul>
             {Array.isArray(cart) && cart.map((product) => (
               <li key={product.id}>
-                {product.name} - ${product.price}
+                {product.name} - ${product.price} x {product.quantity}
               </li>
             ))}
           </ul>
