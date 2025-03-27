@@ -93,7 +93,7 @@ const ProductList = () => {
       setMessage('Product updated successfully!');
       setTimeout(() => setMessage(''), 2000);
     } catch (error) {
-      console.error(error);
+      console.error('Update Error:', error);
       setMessage('Failed to update product.');
     }
   };

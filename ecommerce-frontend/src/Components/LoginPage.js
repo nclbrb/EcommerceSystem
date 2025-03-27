@@ -19,8 +19,7 @@ function LoginPage() {
       const response = await axios.post('http://127.0.0.1:8000/api/login', { email, password });
 
       // Extract user and token from response
-      const user = response.data.user;
-      const token = response.data.token;
+      const { user, token } = response.data;
 
       // Store user and token in AuthContext
       login(user, token);
@@ -37,7 +36,7 @@ function LoginPage() {
       } else {
         navigate('/');  // Default if role is unknown
       }
-      
+
     } catch (error) {
       console.error('Login error:', error);
       setMessage('Login failed. Please check your credentials.');
