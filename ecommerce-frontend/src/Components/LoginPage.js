@@ -17,26 +17,25 @@ function LoginPage() {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/login', { email, password });
-
-      // Extract user and token from response
-      const { user, token } = response.data;
+      
+      // Extract user, token, and message from response
+      const { user, token, message } = response.data;
 
       // Store user and token in AuthContext
       login(user, token);
       
-      // Set success message
-      setMessage(response.data.message);
+      // Set success message and variant
+      setMessage(message);
       setVariant('success');
       
       // Redirect based on user role
       if (user.role === 'employee') {
         navigate('/DashboardEmployee');  // Employee dashboard
       } else if (user.role === 'customer') {
-        navigate('/DashboardCustomer');  // Customer dashboard
+        navigate('/DashboardCustomer');    // Customer dashboard
       } else {
-        navigate('/');  // Default if role is unknown
+        navigate('/');                     // Default if role is unknown
       }
-
     } catch (error) {
       console.error('Login error:', error);
       setMessage('Login failed. Please check your credentials.');

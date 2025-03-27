@@ -9,34 +9,35 @@ const ProductList = () => {
   const { user } = useContext(AuthContext);
   const { cart, setCart } = useContext(CartContext);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState(null);
-  const [search, setSearch]     = useState('');
-  const [message, setMessage]   = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
+  const [message, setMessage] = useState('');
+  const [editingProduct, setEditingProduct] = useState(null);
 
   // Fetch products from API
   useEffect(() => {
-    axios
-      .get('http://127.0.0.1:8000/api/products')
-      .then((response) => {
-        setProducts(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        setLoading(false);
-      });
+    fetchProducts();
   }, []);
 
-  // Handle search input
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/products');
+      setProducts(response.data);
+      setLoading(false);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
   };
+
+  // Handle search input
+  const handleSearch = (e) => setSearch(e.target.value);
 
   // Add product to cart with feedback
   const handleAddToCart = (product) => {
     if (!user) {
-      alert("Please login to add products to your cart.");
+      alert('Please login to add products to your cart.');
       return;
     }
 
@@ -47,6 +48,7 @@ const ProductList = () => {
     } else {
       updatedCart.push({ ...product, quantity: 1 });
     }
+
     setCart(updatedCart);
     setMessage(`${product.name} added to cart!`);
     setTimeout(() => setMessage(''), 2000);
@@ -54,6 +56,7 @@ const ProductList = () => {
 
   // Handle delete product (for employees)
   const handleDeleteProduct = async (productId) => {
+    console.log('Deleting product ID:', productId);
     if (!window.confirm('Are you sure you want to delete this product?')) return;
     try {
       await axios.delete(`http://127.0.0.1:8000/api/products/${productId}`);
@@ -63,6 +66,36 @@ const ProductList = () => {
     } catch (error) {
       console.error('Delete Error:', error.response || error.message);
       setMessage('Failed to delete product.');
+    }
+  };
+
+  // Handle create product (for employees)
+  const handleCreateProduct = async () => {
+    const name = prompt('Enter product name:');
+    const description = prompt('Enter product description:');
+    const price = parseFloat(prompt('Enter product price:'));
+    const stock = parseInt(prompt('Enter product stock:'), 10);
+    const image = prompt('Enter product image URL:');
+
+    if (!name || !description || !price || !stock || !image) {
+      alert('All fields are required.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/products', {
+        name,
+        description,
+        price,
+        stock,
+        image,
+      });
+      setProducts([...products, response.data]);
+      setMessage('Product created successfully!');
+      setTimeout(() => setMessage(''), 2000);
+    } catch (error) {
+      console.error(error);
+      setMessage('Failed to create product.');
     }
   };
 
@@ -110,23 +143,33 @@ const ProductList = () => {
 
   return (
     <div className="container">
-      <div className="mb-4">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Search by name or description..."
-          value={search}
-          onChange={handleSearch}
-        />
-      </div>
+      {user?.role === 'employee' && (
+        <button className="btn btn-success mb-3" onClick={handleCreateProduct}>
+          + Add New Product
+        </button>
+      )}
+
+      <input
+        type="text"
+        className="form-control mb-4"
+        placeholder="Search by name or description..."
+        value={search}
+        onChange={handleSearch}
+      />
+
       {message && <div className="alert alert-success">{message}</div>}
+
       <div className="row">
         {filteredProducts.map((product) => (
           <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={product.id}>
             <div className="card product-card border-0 shadow-sm">
               <div className="overflow-hidden" style={{ height: '200px' }}>
                 <img
-                  src={product.image && product.image.trim() !== '' ? product.image : '/images/default.png'}
+                  src={
+                    product.image && product.image.trim() !== ''
+                      ? product.image
+                      : '/images/default.png'
+                  }
                   alt={product.name}
                   className="card-img-top"
                   style={{ objectFit: 'cover', width: '100%', height: '100%' }}
@@ -148,15 +191,15 @@ const ProductList = () => {
                   Add to Cart
                 </button>
                 {user?.role === 'employee' && (
-                  <div className="mt-2 d-flex justify-content-between">
+                  <div className="mt-2">
                     <button
-                      className="btn btn-warning btn-sm"
+                      className="btn btn-warning me-2"
                       onClick={() => handleUpdateProduct(product)}
                     >
                       Edit
                     </button>
                     <button
-                      className="btn btn-danger btn-sm"
+                      className="btn btn-danger"
                       onClick={() => handleDeleteProduct(product.id)}
                     >
                       Delete
