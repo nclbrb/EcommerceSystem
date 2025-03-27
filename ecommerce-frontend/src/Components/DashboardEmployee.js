@@ -22,22 +22,14 @@ const DashboardEmployee = () => {
   // States for the Add Product modal
   const [showAddModal, setShowAddModal] = useState(false);
   const [newProduct, setNewProduct] = useState({
-    name: '',
-    price: '',
-    description: '',
-    stock: '',
-    image: '',
+    name: '', price: '', description: '', stock: '', image: '',
   });
 
   // States for the Edit Product modal
   const [editingProduct, setEditingProduct] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editProduct, setEditProduct] = useState({
-    name: '',
-    price: '',
-    description: '',
-    stock: '',
-    image: '',
+    name: '', price: '', description: '', stock: '', image: '',
   });
 
   // State for the checkout filter date
@@ -61,7 +53,7 @@ const DashboardEmployee = () => {
   // Fetch orders filtered by date
   const fetchOrdersByDate = (date) => {
     axios
-      .get(`http://127.0.0.1:8000/api/orders/filterByDate/${date}`, config)
+      .get(`http://127.0.0.1:8000/api/orders/filter/${date}`, config)
       .then((response) => {
         setOrders(response.data);
         setLoadingOrders(false);
@@ -222,6 +214,7 @@ const DashboardEmployee = () => {
               <tr>
                 <th>Order ID</th>
                 <th>Product Name</th>
+                <th>Quantity</th>
                 <th>Customer</th>
                 <th>Total Price</th>
                 <th>Status</th>
@@ -230,7 +223,7 @@ const DashboardEmployee = () => {
             </thead>
             <tbody>
               {orders.map((order) => {
-                // Use snake_case keys based on API response
+                // Compute product names and quantities separately from order_details
                 const productNames =
                   order.order_details && order.order_details.length
                     ? order.order_details
@@ -242,10 +235,18 @@ const DashboardEmployee = () => {
                         .join(', ')
                     : 'N/A';
 
+                const productQuantities =
+                  order.order_details && order.order_details.length
+                    ? order.order_details
+                        .map((detail) => detail.quantity)
+                        .join(', ')
+                    : 'N/A';
+
                 return (
                   <tr key={order.id}>
                     <td>{order.id}</td>
                     <td>{productNames}</td>
+                    <td>{productQuantities}</td>
                     <td>{order.customer_name || (order.user && order.user.name) || 'N/A'}</td>
                     <td>${parseFloat(order.total_price).toFixed(2)}</td>
                     <td>{order.status}</td>

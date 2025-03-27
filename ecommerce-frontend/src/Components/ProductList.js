@@ -40,17 +40,62 @@ const ProductList = () => {
       return;
     }
 
-    const existingProductIndex = cart.findIndex(item => item.id === product.id);
-    let updatedCart = [];
+    const existingProductIndex = cart.findIndex((item) => item.id === product.id);
+    let updatedCart = [...cart];
     if (existingProductIndex >= 0) {
-      updatedCart = [...cart];
       updatedCart[existingProductIndex].quantity += 1;
     } else {
-      updatedCart = [...cart, { ...product, quantity: 1 }];
+      updatedCart.push({ ...product, quantity: 1 });
     }
     setCart(updatedCart);
     setMessage(`${product.name} added to cart!`);
     setTimeout(() => setMessage(''), 2000);
+  };
+
+  // Handle delete product (for employees)
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/products/${productId}`);
+      setProducts(products.filter((product) => product.id !== productId));
+      setMessage('Product deleted successfully!');
+      setTimeout(() => setMessage(''), 2000);
+    } catch (error) {
+      console.error('Delete Error:', error.response || error.message);
+      setMessage('Failed to delete product.');
+    }
+  };
+
+  // Handle update product (for employees)
+  const handleUpdateProduct = async (product) => {
+    const name = prompt('Enter new product name:', product.name);
+    const description = prompt('Enter new product description:', product.description);
+    const price = parseFloat(prompt('Enter new product price:', product.price));
+    const stock = parseInt(prompt('Enter new product stock:', product.stock), 10);
+    const image = prompt('Enter new product image URL:', product.image);
+
+    if (!name || !description || !price || !stock || !image) {
+      alert('All fields are required.');
+      return;
+    }
+
+    try {
+      const response = await axios.put(`http://127.0.0.1:8000/api/products/${product.id}`, {
+        name,
+        description,
+        price,
+        stock,
+        image,
+      });
+      setProducts(
+        products.map((p) => (p.id === product.id ? response.data : p))
+      );
+      setMessage('Product updated successfully!');
+      setTimeout(() => setMessage(''), 2000);
+    } catch (error) {
+      console.error(error);
+      setMessage('Failed to update product.');
+    }
   };
 
   if (loading) return <div className="alert alert-info">Loading products...</div>;
@@ -81,7 +126,7 @@ const ProductList = () => {
             <div className="card product-card border-0 shadow-sm">
               <div className="overflow-hidden" style={{ height: '200px' }}>
                 <img
-                  src={product.image || '/images/default.png'}
+                  src={product.image && product.image.trim() !== '' ? product.image : '/images/default.png'}
                   alt={product.name}
                   className="card-img-top"
                   style={{ objectFit: 'cover', width: '100%', height: '100%' }}
@@ -102,6 +147,22 @@ const ProductList = () => {
                 >
                   Add to Cart
                 </button>
+                {user?.role === 'employee' && (
+                  <div className="mt-2 d-flex justify-content-between">
+                    <button
+                      className="btn btn-warning btn-sm"
+                      onClick={() => handleUpdateProduct(product)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleDeleteProduct(product.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
