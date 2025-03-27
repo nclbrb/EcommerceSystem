@@ -6,44 +6,47 @@ import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 
 function LoginPage() {
-  const [email, setEmail]       = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage]   = useState(null);
-  const [variant, setVariant]   = useState('');
-  const { login }               = useContext(AuthContext);
-  const navigate                = useNavigate();
+  const [message, setMessage] = useState(null);
+  const [variant, setVariant] = useState('');
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/login', { email, password });
-      
-      // Assume the API returns a user object with a "role" property
+
+      // Extract user and token from response
       const user = response.data.user;
       const token = response.data.token;
-      
+
+      // Store user and token in AuthContext
       login(user, token);
+      
+      // Set success message
       setMessage(response.data.message);
       setVariant('success');
       
       // Redirect based on user role
-      if(user.role === 'employee') {
-        navigate('/DashboardEmployee');
-      } else {  // Default to customer
-        navigate('/DashboardCustomer');
+      if (user.role === 'employee') {
+        navigate('/DashboardEmployee');  // Employee dashboard
+      } else if (user.role === 'customer') {
+        navigate('/DashboardCustomer');  // Customer dashboard
+      } else {
+        navigate('/');  // Default if role is unknown
       }
+      
     } catch (error) {
-      console.error(error);
+      console.error('Login error:', error);
       setMessage('Login failed. Please check your credentials.');
       setVariant('danger');
     }
   };
 
   return (
-    <Container
-      className="d-flex align-items-center justify-content-center"
-      style={{ minHeight: '75vh' }}
-    >
+    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '75vh' }}>
       <Row className="w-100 justify-content-center">
         <Col md={8} lg={4}>
           <Card className="shadow border-0 login-card">
