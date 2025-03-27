@@ -11,19 +11,27 @@ function LoginPage() {
   const [message, setMessage]   = useState(null);
   const [variant, setVariant]   = useState('');
   const { login }               = useContext(AuthContext);
-  const navigate              = useNavigate();
+  const navigate                = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/login', { email, password });
-      // Assume the response contains user details (e.g., name, email) along with token.
-      // You might need to adjust according to your API response.
-      login(response.data.user, response.data.token);
+      
+      // Assume the API returns a user object with a "role" property
+      const user = response.data.user;
+      const token = response.data.token;
+      
+      login(user, token);
       setMessage(response.data.message);
       setVariant('success');
-      // Redirect after login
-      navigate('/');
+      
+      // Redirect based on user role
+      if(user.role === 'employee') {
+        navigate('/DashboardEmployee');
+      } else {  // Default to customer
+        navigate('/DashboardCustomer');
+      }
     } catch (error) {
       console.error(error);
       setMessage('Login failed. Please check your credentials.');
@@ -32,10 +40,13 @@ function LoginPage() {
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
+    <Container
+      className="d-flex align-items-center justify-content-center"
+      style={{ minHeight: '75vh' }}
+    >
       <Row className="w-100 justify-content-center">
-        <Col md={6} lg={5}>
-          <Card className="shadow border-0">
+        <Col md={8} lg={4}>
+          <Card className="shadow border-0 login-card">
             <Card.Body>
               <h2 className="text-center mb-4">Login</h2>
               {message && <Alert variant={variant}>{message}</Alert>}
