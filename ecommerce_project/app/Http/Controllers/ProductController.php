@@ -21,9 +21,15 @@ class ProductController extends Controller
             'name'        => 'required|string|max:255',
             'description' => 'required|string',
             'price'       => 'required|numeric|min:0',
-            'stock'       => 'required|integer|min:0',
+            // Make stock optional and default to 0 if not provided.
+            'stock'       => 'sometimes|integer|min:0',
             'image'       => 'nullable|string',
         ]);
+
+        // Set default stock if not provided
+        if (!isset($validated['stock'])) {
+            $validated['stock'] = 0;
+        }
 
         $product = Product::create($validated);
         return response()->json($product, 201);
@@ -42,7 +48,8 @@ class ProductController extends Controller
             'name'        => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
             'price'       => 'sometimes|required|numeric|min:0',
-            'stock'       => 'sometimes|required|integer|min:0',
+            // Make stock optional for updates as well
+            'stock'       => 'sometimes|integer|min:0',
             'image'       => 'nullable|string',
         ]);
 
@@ -53,8 +60,7 @@ class ProductController extends Controller
     // DELETE /products/{product} - Delete a product
     public function destroy(Product $product)
     {
-        // currently comment to show that you can in fact delete a product
-        // Prevent deletion if product is associated with any orders
+        // Uncomment or adjust this check if needed.
         // if ($product->orders()->exists()) {
         //     return response()->json([
         //         'error' => 'Product cannot be deleted because it’s already in an order.'
@@ -66,15 +72,13 @@ class ProductController extends Controller
     }
 
     public function search(Request $request)
-{
-    $query = $request->input('query');
+    {
+        $query = $request->input('query');
 
-    $products = Product::where('name', 'LIKE', "%$query%")
-        ->orWhere('description', 'LIKE', "%$query%")
-        ->get();
+        $products = Product::where('name', 'LIKE', "%$query%")
+            ->orWhere('description', 'LIKE', "%$query%")
+            ->get();
 
-    return response()->json($products);
+        return response()->json($products);
+    }
 }
-
-}
-  
