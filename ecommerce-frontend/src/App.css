@@ -1,4 +1,8 @@
 /* Arrow Controls: Make the arrows orange */
+body {
+  font-family: 'Outfit';
+}
+
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
   filter: brightness(0) saturate(100%) invert(39%) sepia(95%) saturate(3594%) hue-rotate(4deg) brightness(95%) contrast(107%);

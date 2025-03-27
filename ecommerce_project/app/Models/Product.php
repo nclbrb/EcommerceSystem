@@ -3,17 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 
 class Product extends Model
 {
     use HasFactory;
     protected $fillable = ['name', 'description', 'price', 'stock', 'image'];
 
-    public function orderDetails(): BelongsToMany
+    // A product can have many order details.
+    public function orderDetails(): HasMany
     {
-        return $this->belongsToMany(OrderDetail::class, 'product_id');
+         return $this->hasMany(OrderDetail::class);
     }
 }

@@ -77,25 +77,27 @@ const ProductList = () => {
       {message && <div className="alert alert-success">{message}</div>}
       <div className="row">
         {filteredProducts.map((product) => (
-          <div className="col-md-4 mb-4" key={product.id}>
-            <div className="card d-flex h-100 shadow-sm product-card">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="card-img-top"
-                height="200"
-              />
-              <div className="card-body d-flex flex-column">
+          <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={product.id}>
+            <div className="card product-card border-0 shadow-sm">
+              <div className="overflow-hidden" style={{ height: '200px' }}>
+                <img
+                  src={product.image || '/images/default.png'}
+                  alt={product.name}
+                  className="card-img-top"
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
+              </div>
+              <div className="card-body">
                 <h5 className="card-title">{product.name}</h5>
-                <p className="card-text">{product.description}</p>
-                <p className="card-text">
-                  <strong>Price: </strong>${product.price}
-                </p>
-                <p className="card-text">
-                  <strong>Stock: </strong>{product.stock}
-                </p>
+                <p className="card-text text-truncate">{product.description}</p>
+                <div className="d-flex justify-content-between align-items-center">
+                  <span className="fw-bold">${parseFloat(product.price).toFixed(2)}</span>
+                  <span className="badge bg-success">Stock: {product.stock}</span>
+                </div>
+              </div>
+              <div className="card-footer bg-transparent border-0">
                 <button
-                  className="btn btn-primary mt-auto"
+                  className="btn btn-outline-primary w-100"
                   onClick={() => handleAddToCart(product)}
                 >
                   Add to Cart
