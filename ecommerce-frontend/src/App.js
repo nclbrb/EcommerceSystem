@@ -16,6 +16,7 @@ import RegisterPage from './Components/RegisterPage';
 import DashboardCustomer from './Components/DashboardCustomer';
 import DashboardEmployee from './Components/DashboardEmployee';
 import Cart from './Components/Cart';
+import EmployeeDashboard from './Components/EmployeeDashboard';
 import CheckoutPage from './Components/CheckoutPage';
 import OrderConfirmationPage from './Components/OrderConfirmationPage';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
@@ -235,6 +236,7 @@ function App() {
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
+                 <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
               </Routes>
             </main>
             <Footer />
