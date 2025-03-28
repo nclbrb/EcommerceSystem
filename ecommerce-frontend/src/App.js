@@ -1,4 +1,3 @@
-// src/App.js
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useContext } from 'react';
 import {
@@ -122,21 +121,19 @@ function HomePage() {
   );
 }
 
-// Updated Header component using NavLink for active link styling
-// In App.js (Header component update)
 function Header() {
   const { user, logout } = useContext(AuthContext);
   const { cart } = useContext(CartContext);
   const navigate = useNavigate();
 
-  // Calculate total items in cart (sum of quantities)
+  // Calculate total items in cart
   const totalItems = Array.isArray(cart)
     ? cart.reduce((acc, product) => acc + product.quantity, 0)
     : 0;
 
   const handleLogout = () => {
     logout();
-    navigate('/'); // Redirect to home after logout
+    navigate('/');
   };
 
   const isEmployee = user && user.role === 'employee';
@@ -146,7 +143,7 @@ function Header() {
     <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
       <Container>
         <Navbar.Brand as={NavLink} to="/" className="text-white">
-          eCommerce
+          Online Shop
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
@@ -164,7 +161,8 @@ function Header() {
                 >
                   Products
                 </NavLink>
-                {/* Only show Cart link for customers */}
+                {
+                }
                 {!isEmployee && (
                   <NavLink
                     to="/cart"
@@ -175,7 +173,8 @@ function Header() {
                     Cart <Badge bg="secondary">{totalItems}</Badge>
                   </NavLink>
                 )}
-                {/* Use a plain Nav.Link (or button) for logout */}
+                {
+                }
                 <Nav.Link onClick={handleLogout} className="nav-link">
                   Logout
                 </Nav.Link>
@@ -212,7 +211,7 @@ function Footer() {
   return (
     <footer className="bg-dark text-light mt-5 p-4 text-center">
       <Container>
-        <p>&copy; {new Date().getFullYear()} eCommerce. All Rights Reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Online Shop. All Rights Reserved.</p>
       </Container>
     </footer>
   );

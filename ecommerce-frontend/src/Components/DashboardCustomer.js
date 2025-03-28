@@ -1,4 +1,3 @@
-// src/Components/DashboardCustomer.js
 import React, { useContext, useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Spinner, Alert, Form } from 'react-bootstrap';
 import { CartContext } from '../contexts/CartContext';
@@ -46,7 +45,9 @@ const DashboardCustomer = () => {
   return (
     <Container className="mt-4">
       <h1>Products</h1>
-      {/* Search Input */}
+      {
+      // Search Input
+      }
       <Form.Group className="mb-4">
         <Form.Control
           type="text"
@@ -70,15 +71,15 @@ const DashboardCustomer = () => {
               <Card className="shadow-sm product-card">
                 <div style={{ height: '200px', overflow: 'hidden' }}>
                 <Card.Img
-  variant="top"
-  src={
-    product.image && product.image.trim() !== ''
-      ? `http://127.0.0.1:8000${product.image}`
-      : 'http://127.0.0.1:8000/images/default.png'
-  }
-  alt={product.name}
-  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-/>
+                variant="top"
+                src={
+                product.image && product.image.trim() !== ''
+                ? `http://127.0.0.1:8000${product.image}`
+                : 'http://127.0.0.1:8000/images/default.png'
+                }
+                alt={product.name}
+                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
                 </div>
                 <Card.Body>
                   <Card.Title>{product.name}</Card.Title>

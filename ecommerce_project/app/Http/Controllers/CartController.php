@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
-    // Add item to cart (Only stores in session, doesn't create order yet)
+    // Add item to cart
     public function addToCart(Request $request)
     {
     $request->validate([
@@ -23,12 +23,12 @@ class CartController extends Controller
 
     $product = Product::findOrFail($request->product_id);
 
-    // 🚨 **Prevent adding to cart if stock is empty**
+    // Prevent adding to cart if stock is empty
     if ($product->stock <= 0) {
         return response()->json(['error' => 'This product is out of stock'], 400);
     }
 
-    // 🚨 **Prevent adding more than available stock**
+    // Prevent adding more than available stock
     if ($product->stock < $request->quantity) {
         return response()->json(['error' => 'Not enough stock available'], 400);
     }
@@ -93,8 +93,7 @@ class CartController extends Controller
     }
 
     try {
-        DB::beginTransaction(); // ✅ FIXED
-
+        DB::beginTransaction(); 
         $order = Order::create([
             'user_id' => $userId,
             'total_price' => $totalPrice,
@@ -126,9 +125,9 @@ class CartController extends Controller
             $product->save();
         }
 
-        Session::forget('cart'); // Clear cart
+        Session::forget('cart'); 
 
-        DB::commit(); // ✅ FIXED
+        DB::commit(); 
 
         return response()->json([
             'message' => 'Checkout successful',
@@ -140,7 +139,7 @@ class CartController extends Controller
     }
     }
 
-    //search producrs function
+    // Search producrs function
     public function searchProducts(Request $request)
 {
     $request->validate([
