@@ -1,4 +1,3 @@
-// src/Components/Navbar.js
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Navbar, Nav, Container } from 'react-bootstrap';
@@ -35,7 +34,8 @@ const AppNavbar = () => {
             >
               Orders
             </NavLink>
-            {/* Add other nav links as needed */}
+            {
+            }
           </Nav>
         </Navbar.Collapse>
       </Container>

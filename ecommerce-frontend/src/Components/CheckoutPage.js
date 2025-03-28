@@ -1,4 +1,3 @@
-// src/Components/CheckoutPage.js
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -56,7 +55,7 @@ const CheckoutPage = () => {
       )
       .then((response) => {
         alert(response.data.message || 'Checkout successful! Thank you for your purchase.');
-        clearCart(); // Clear the cart after a successful checkout
+        clearCart();
         navigate('/order-confirmation');
       })
       .catch((error) => {
@@ -69,7 +68,9 @@ const CheckoutPage = () => {
     <Container className="mt-5">
       <h2 className="mb-4">Checkout</h2>
       <Row>
-        {/* Payment Information */}
+        {
+        // Payment Information
+        }
         <Col md={6}>
           <Card className="mb-4 shadow-sm">
             <Card.Header as="h5">Payment Information</Card.Header>
@@ -98,7 +99,9 @@ const CheckoutPage = () => {
           </Card>
         </Col>
 
-        {/* Order Summary */}
+        {
+        // Order Summary
+        }
         <Col md={6}>
           <Card className="mb-4 shadow-sm">
             <Card.Header as="h5">Your Order</Card.Header>

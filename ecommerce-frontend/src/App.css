@@ -45,7 +45,8 @@ footer {
   color: #fff !important;
 }
 
+/* Blue underline */
 .active-nav-link {
-  border-bottom: 2px solid #007bff; /* Blue underline */
+  border-bottom: 2px solid #007bff; 
   font-weight: bold;
 }

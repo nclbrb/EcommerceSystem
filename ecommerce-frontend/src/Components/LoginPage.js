@@ -1,4 +1,3 @@
-// src/Components/LoginPage.js
 import React, { useState, useContext } from 'react';
 import { Container, Form, Button, Alert, Card, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';

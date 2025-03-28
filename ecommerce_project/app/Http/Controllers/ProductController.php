@@ -83,12 +83,6 @@ class ProductController extends Controller
     // DELETE /products/{product} - Delete a product
     public function destroy(Product $product)
     {
-        // Optionally prevent deletion if product is associated with any orders
-        // if ($product->orders()->exists()) {
-        //     return response()->json([
-        //         'error' => 'Product cannot be deleted because it’s already in an order.'
-        //     ], 403);
-        // }
 
         // Delete the image file if exists and it's not the default image
         if ($product->image && $product->image != '/images/default.png') {

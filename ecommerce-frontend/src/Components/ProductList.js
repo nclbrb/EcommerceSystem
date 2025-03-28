@@ -1,4 +1,3 @@
-// src/Components/ProductList.js
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -81,11 +80,11 @@ const ProductList = () => {
             <div className="card product-card border-0 shadow-sm">
               <div className="overflow-hidden" style={{ height: '200px' }}>
               <img
-  src={`http://127.0.0.1:8000${product.image || '/images/default.png'}`}
-  alt={product.name}
-  className="card-img-top"
-  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-/>
+              src={`http://127.0.0.1:8000${product.image || '/images/default.png'}`}
+              alt={product.name}
+              className="card-img-top"
+              style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+              />
               </div>
               <div className="card-body">
                 <h5 className="card-title">{product.name}</h5>

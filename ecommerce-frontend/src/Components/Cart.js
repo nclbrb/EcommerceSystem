@@ -1,4 +1,3 @@
-// src/Components/Cart.js
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Spinner, Alert, Form } from 'react-bootstrap';
@@ -56,15 +55,15 @@ const Cart = () => {
               <Card className="shadow-sm product-card h-100">
                 <div style={{ height: '200px', overflow: 'hidden' }}>
                 <Card.Img
-  variant="top"
-  src={
-    product.image && product.image.trim() !== ''
-      ? `http://127.0.0.1:8000${product.image}`
-      : 'http://127.0.0.1:8000/images/default.png'
-  }
-  alt={product.name}
-  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-/>
+                variant="top"
+                src={
+                product.image && product.image.trim() !== ''
+                ? `http://127.0.0.1:8000${product.image}`
+                : 'http://127.0.0.1:8000/images/default.png'
+                }
+                 alt={product.name}
+                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                 />
                 </div>
                 <Card.Body className="d-flex flex-column">
                   <Card.Title>{product.name}</Card.Title>

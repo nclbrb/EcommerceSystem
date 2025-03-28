@@ -10,7 +10,7 @@ class EnsureEmployee
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Check if the authenticated user has the 'employee' role
+        // Check if the authenticated user has the employee role
         if ($request->user() && $request->user()->role === 'employee') {
             return $next($request);
         }

@@ -1,4 +1,3 @@
-// src/Components/DashboardEmployee.js
 import React, { useState, useEffect, useMemo } from 'react';
 import { Container, Table, Button, Spinner, Alert, Form, Modal, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
@@ -186,7 +185,7 @@ const DashboardEmployee = () => {
       price: product.price,
       description: product.description,
       stock: product.stock,
-      imageFile: null, // New file to be uploaded if needed
+      imageFile: null,
     });
     setShowEditModal(true);
   };
@@ -286,7 +285,8 @@ const DashboardEmployee = () => {
         )}
       </section>
 
-      {/* Product Management Section */}
+      {
+      }
       <section className="mt-5">
         <h4>Product Management</h4>
         <Button variant="success" onClick={() => setShowAddModal(true)}>
@@ -335,7 +335,9 @@ const DashboardEmployee = () => {
         )}
       </section>
 
-      {/* Modals */}
+      {
+      // Modals
+      }
       <AddProductModal
         show={showAddModal}
         handleClose={() => setShowAddModal(false)}

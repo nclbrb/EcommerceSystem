@@ -1,4 +1,3 @@
-// src/Components/RegisterPage.js
 import React, { useState } from 'react';
 import { Container, Form, Button, Alert, Card, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
