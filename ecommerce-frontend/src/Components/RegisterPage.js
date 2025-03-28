@@ -41,7 +41,7 @@ function RegisterPage() {
   return (
     <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '75.6vh' }}>
       <Row className="w-100 justify-content-center">
-        <Col md={8} lg={6}>
+        <Col md={7} lg={5}>
           <Card className="shadow border-0">
             <Card.Body>
               <h2 className="text-center mb-4">Register</h2>

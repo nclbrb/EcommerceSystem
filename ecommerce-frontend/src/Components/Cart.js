@@ -1,82 +1,112 @@
 // src/Components/Cart.js
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container, Row, Col, Card, Button, Spinner, Alert, Form } from 'react-bootstrap';
 import { CartContext } from '../contexts/CartContext';
 import { AuthContext } from '../contexts/AuthContext';
 
 const Cart = () => {
-  const { cart, setCart } = useContext(CartContext);
+  const { cart, setCart, updateQuantity, clearCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
 
-  const handleRemoveFromCart = (index) => {
-    const updatedCart = cart.filter((_, i) => i !== index);
+  // Remove an item from the cart using its product id
+  const handleRemoveFromCart = (productId) => {
+    const updatedCart = cart.filter((item) => item.id !== productId);
     setCart(updatedCart);
   };
 
-  const handleClearCart = () => {
-    setCart([]);
-  };
-
+  // Calculate total price based on quantity of each product
   const totalPrice = Array.isArray(cart)
     ? cart.reduce((total, product) => {
         const price = parseFloat(product.price);
         return total + (isNaN(price) ? 0 : price * product.quantity);
       }, 0)
     : 0;
-  const totalItems = Array.isArray(cart) ? cart.reduce((sum, product) => sum + product.quantity, 0) : 0;
-  const formattedTotalPrice = totalPrice && !isNaN(totalPrice) ? totalPrice.toFixed(2) : '0.00';
+  const formattedTotalPrice = totalPrice && !isNaN(totalPrice)
+    ? totalPrice.toFixed(2)
+    : '0.00';
 
   return (
-    <div className="container">
-      <h2 className="my-4">Your Cart</h2>
-      {Array.isArray(cart) && cart.length === 0 ? (
-        <div className="alert alert-warning">Your cart is empty.</div>
-      ) : (
-        <div className="row">
-          {Array.isArray(cart) &&
-            cart.map((product, index) => (
-              <div className="col-md-4 mb-4" key={product.id}>
-                <div className="card d-flex h-100 shadow-sm cart-card">
-                  <img
-                    src={product.image || '/images/placeholder.png'}
-                    alt={product.name}
-                    className="card-img-top"
-                    height="200"
-                  />
-                  <div className="card-body d-flex flex-column">
-                    <h5 className="card-title">{product.name}</h5>
-                    <p className="card-text">{product.description}</p>
-                    <p className="card-text">
-                      <strong>Price: </strong>${product.price} x {product.quantity}
-                    </p>
-                    <button
-                      className="btn btn-danger mt-auto"
-                      onClick={() => handleRemoveFromCart(index)}
-                    >
-                      Remove from Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-        </div>
-      )}
+    <Container className="mt-4">
+      <h2 className="mb-4">Your Cart</h2>
+
+      {/* Order Summary Card at the Top */}
       {Array.isArray(cart) && cart.length > 0 && (
-        <div className="text-center">
-          <h3>Total Items: {totalItems}</h3>
-          <h3>Total Price: ${formattedTotalPrice}</h3>
-          <div className="d-flex justify-content-center mt-3">
-            <button className="btn btn-warning me-3" onClick={handleClearCart}>
-              Clear Cart
-            </button>
-            <Link to="/checkout" className="btn btn-primary">
-              Proceed to Checkout
-            </Link>
-          </div>
-        </div>
+        <Card className="mb-4 shadow-sm">
+          <Card.Body className="d-flex justify-content-between align-items-center">
+            <h4 className="mb-0">Total Price: ${formattedTotalPrice}</h4>
+            <div>
+              <Button variant="warning" className="me-3" onClick={clearCart}>
+                Clear Cart
+              </Button>
+              <Link to="/checkout" className="btn btn-primary">
+                Proceed to Checkout
+              </Link>
+            </div>
+          </Card.Body>
+        </Card>
       )}
-    </div>
+
+      {Array.isArray(cart) && cart.length === 0 ? (
+        <Alert variant="warning">Your cart is empty.</Alert>
+      ) : (
+        <Row>
+          {cart.map((product) => (
+            <Col key={product.id} lg={3} md={4} sm={6} className="mb-4">
+              <Card className="shadow-sm product-card h-100">
+                <div style={{ height: '200px', overflow: 'hidden' }}>
+                <Card.Img
+  variant="top"
+  src={
+    product.image && product.image.trim() !== ''
+      ? `http://127.0.0.1:8000${product.image}`
+      : 'http://127.0.0.1:8000/images/default.png'
+  }
+  alt={product.name}
+  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+/>
+                </div>
+                <Card.Body className="d-flex flex-column">
+                  <Card.Title>{product.name}</Card.Title>
+                  <Card.Text className="text-truncate">{product.description}</Card.Text>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <span className="fw-bold">
+                      ${parseFloat(product.price).toFixed(2)}
+                    </span>
+                    <span className="badge bg-success">Stock: {product.stock}</span>
+                  </div>
+                  <div className="mt-2">
+                    <Form.Label className="small">Quantity:</Form.Label>
+                    <Form.Control
+                      type="number"
+                      min="1"
+                      value={product.quantity}
+                      onChange={(e) =>
+                        updateQuantity(product.id, parseInt(e.target.value, 10))
+                      }
+                      size="sm"
+                    />
+                  </div>
+                  <Card.Text className="mt-auto">
+                    <strong>Subtotal:</strong> ${(product.price * product.quantity).toFixed(2)}
+                  </Card.Text>
+                </Card.Body>
+                <Card.Footer className="bg-transparent border-0">
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    className="w-100"
+                    onClick={() => handleRemoveFromCart(product.id)}
+                  >
+                    Remove from Cart
+                  </Button>
+                </Card.Footer>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
+    </Container>
   );
 };
 

@@ -1,4 +1,8 @@
 /* Arrow Controls: Make the arrows orange */
+body {
+  font-family: 'Outfit';
+}
+
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
   filter: brightness(0) saturate(100%) invert(39%) sepia(95%) saturate(3594%) hue-rotate(4deg) brightness(95%) contrast(107%);
@@ -39,4 +43,9 @@ footer {
 /* Override any dimmed styles for header links */
 .navbar .nav-link, .navbar-brand {
   color: #fff !important;
+}
+
+.active-nav-link {
+  border-bottom: 2px solid #007bff; /* Blue underline */
+  font-weight: bold;
 }

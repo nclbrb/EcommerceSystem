@@ -46,7 +46,9 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('cart/add', [CartController::class, 'addToCart']);
     Route::get('cart', [CartController::class, 'viewCart']);
-    Route::post('cart/checkout', [CartController::class, 'checkout']);
+    
+    //Use OrderController for checkout
+    Route::post('cart/checkout', [OrderController::class, 'checkout']);
 });
 
 /*
@@ -62,9 +64,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum', EnsureEmployee::class])->group(function () {
     // Product Management (Create, Update, Delete). The index route is public.
     Route::apiResource('products', ProductController::class)->except(['index', 'show']);
-
-    // Optionally, if you want employees to also view product details:
-    // Route::get('products/{id}', [ProductController::class, 'show']);
 
     // Checkout Monitoring
     Route::get('orders', [OrderController::class, 'index']);
