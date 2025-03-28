@@ -44,3 +44,8 @@ footer {
 .navbar .nav-link, .navbar-brand {
   color: #fff !important;
 }
+
+.active-nav-link {
+  border-bottom: 2px solid #007bff; /* Blue underline */
+  font-weight: bold;
+}

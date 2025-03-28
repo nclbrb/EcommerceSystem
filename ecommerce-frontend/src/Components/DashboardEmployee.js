@@ -1,13 +1,17 @@
 // src/Components/DashboardEmployee.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Container, Table, Button, Spinner, Alert, Form, Modal, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import { AddProductModal, EditProductModal } from './ProductModals'; // Import the modals
+import { AddProductModal, EditProductModal } from './ProductModals';
 
 const DashboardEmployee = () => {
   // Retrieve token from localStorage
   const token = localStorage.getItem('token');
-  const config = { headers: { 'Authorization': `Bearer ${token}` } };
+
+  // Memoize the config object so it only updates when the token changes
+  const config = useMemo(() => {
+    return { headers: { 'Authorization': `Bearer ${token}` } };
+  }, [token]);
 
   // State for orders (for order monitoring)
   const [orders, setOrders] = useState([]);
@@ -26,7 +30,7 @@ const DashboardEmployee = () => {
     price: '',
     description: '',
     stock: '',
-    image: '',
+    imageFile: null,
   });
 
   // States for the Edit Product modal
@@ -37,13 +41,13 @@ const DashboardEmployee = () => {
     price: '',
     description: '',
     stock: '',
-    image: '',
+    imageFile: null,
   });
 
   // State for the checkout filter date
   const [filterDate, setFilterDate] = useState('');
 
-  // Fetch orders for monitoring (all orders)
+  // Fetch all orders
   const fetchOrders = () => {
     axios
       .get('http://127.0.0.1:8000/api/orders', config)
@@ -58,10 +62,10 @@ const DashboardEmployee = () => {
       });
   };
 
-  // Fetch orders filtered by date
+  // Fetch orders filtered by date using the correct endpoint
   const fetchOrdersByDate = (date) => {
     axios
-      .get(`http://127.0.0.1:8000/api/orders/filterByDate/${date}`, config)
+      .get(`http://127.0.0.1:8000/api/orders/filter/${date}`, config)
       .then((response) => {
         setOrders(response.data);
         setLoadingOrders(false);
@@ -78,7 +82,7 @@ const DashboardEmployee = () => {
     fetchOrders();
   }, [config]);
 
-  // Function to fetch products for management
+  // Fetch products for management
   const fetchProducts = () => {
     axios
       .get('http://127.0.0.1:8000/api/products', config)
@@ -97,19 +101,29 @@ const DashboardEmployee = () => {
     fetchProducts();
   }, [config]);
 
-  // Handler to add a new product (with default image fallback)
+  // Handler to add a new product using FormData (for file uploads)
   const handleAddProduct = () => {
-    const productToAdd = {
-      ...newProduct,
-      image: newProduct.image.trim() === '' ? '/images/default.png' : newProduct.image,
-    };
+    const formData = new FormData();
+    formData.append('name', newProduct.name);
+    formData.append('price', newProduct.price);
+    formData.append('description', newProduct.description);
+    formData.append('stock', newProduct.stock);
+    if (newProduct.imageFile) {
+      formData.append('image', newProduct.imageFile);
+    }
 
     axios
-      .post('http://127.0.0.1:8000/api/products', productToAdd, config)
+      .post('http://127.0.0.1:8000/api/products', formData, {
+        ...config,
+        headers: {
+          ...config.headers,
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       .then(() => {
         fetchProducts();
         setShowAddModal(false);
-        setNewProduct({ name: '', price: '', description: '', stock: '', image: '' });
+        setNewProduct({ name: '', price: '', description: '', stock: '', imageFile: null });
       })
       .catch((error) => {
         console.error('Error adding product:', error.response || error);
@@ -117,16 +131,31 @@ const DashboardEmployee = () => {
       });
   };
 
-  // Handler to update an existing product
+  // Handler to update an existing product using FormData
   const handleEditProduct = () => {
     if (!editingProduct) return;
+    const formData = new FormData();
+    formData.append('name', editProduct.name);
+    formData.append('price', editProduct.price);
+    formData.append('description', editProduct.description);
+    formData.append('stock', editProduct.stock);
+    if (editProduct.imageFile) {
+      formData.append('image', editProduct.imageFile);
+    }
+
     axios
-      .put(`http://127.0.0.1:8000/api/products/${editingProduct.id}`, editProduct, config)
+      .put(`http://127.0.0.1:8000/api/products/${editingProduct.id}`, formData, {
+        ...config,
+        headers: {
+          ...config.headers,
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       .then(() => {
         fetchProducts();
         setShowEditModal(false);
         setEditingProduct(null);
-        setEditProduct({ name: '', price: '', description: '', stock: '', image: '' });
+        setEditProduct({ name: '', price: '', description: '', stock: '', imageFile: null });
       })
       .catch((error) => {
         console.error('Error updating product:', error.response || error);
@@ -149,7 +178,7 @@ const DashboardEmployee = () => {
     }
   };
 
-  // Open the edit modal and pre-fill with the selected product's data
+  // Open the edit modal with pre-filled data
   const openEditModal = (product) => {
     setEditingProduct(product);
     setEditProduct({
@@ -157,7 +186,7 @@ const DashboardEmployee = () => {
       price: product.price,
       description: product.description,
       stock: product.stock,
-      image: product.image || '',
+      imageFile: null, // New file to be uploaded if needed
     });
     setShowEditModal(true);
   };
@@ -230,7 +259,6 @@ const DashboardEmployee = () => {
             </thead>
             <tbody>
               {orders.map((order) => {
-                // Use snake_case keys based on API response
                 const productNames =
                   order.order_details && order.order_details.length
                     ? order.order_details
@@ -307,7 +335,7 @@ const DashboardEmployee = () => {
         )}
       </section>
 
-      {/* Add Product Modal */}
+      {/* Modals */}
       <AddProductModal
         show={showAddModal}
         handleClose={() => setShowAddModal(false)}
@@ -316,7 +344,6 @@ const DashboardEmployee = () => {
         handleAddProduct={handleAddProduct}
       />
 
-      {/* Edit Product Modal */}
       <EditProductModal
         show={showEditModal}
         handleClose={() => setShowEditModal(false)}

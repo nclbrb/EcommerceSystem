@@ -1,12 +1,20 @@
 // src/App.js
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  NavLink,
+  Link,
+  useNavigate,
+  Navigate
+} from 'react-router-dom';
 import { Navbar, Nav, Container, Carousel, Button, Row, Col, Card, Badge } from 'react-bootstrap';
 import LoginPage from './Components/LoginPage';
 import RegisterPage from './Components/RegisterPage';
 import DashboardCustomer from './Components/DashboardCustomer';
-import DashboardEmployee from './Components/DashboardEmployee'; // Import employee dashboard
+import DashboardEmployee from './Components/DashboardEmployee';
 import Cart from './Components/Cart';
 import CheckoutPage from './Components/CheckoutPage';
 import OrderConfirmationPage from './Components/OrderConfirmationPage';
@@ -14,16 +22,13 @@ import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { CartProvider, CartContext } from './contexts/CartContext';
 import './App.css';
 
-// HomePage component with Carousel and Feature Cards
 function HomePage() {
   const { user } = useContext(AuthContext);
   
-  // If user is logged in, redirect them to the appropriate dashboard
   if (user) {
     return user.role === 'employee' ? <Navigate to="/DashboardEmployee" /> : <Navigate to="/DashboardCustomer" />;
   }
   
-  // Define captions based on login status (for non-authenticated users)
   const slides = [
     {
       image: "/images/slide1.jpg",
@@ -47,36 +52,36 @@ function HomePage() {
 
   return (
     <>
-     <Carousel indicators={true} controls={true}>
-      {slides.map((slide, index) => (
-        <Carousel.Item key={index}>
-          <img
-            className="d-block w-100"
-            src={slide.image}
-            alt={`Slide ${index + 1}`}
-            style={{ height: "435px", objectFit: "cover" }}
-          />
-          <Carousel.Caption
-           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            padding: '2.5rem',
-            width: '100%',
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }}
-          >
-            <h3 style={{ color: "black" }}>{slide.title}</h3>
-            <p style={{ color: "black" }}>{slide.text}</p>
-            {slide.button && (
-              <Button variant={slide.button.variant} as={Link} to={slide.button.link}>
-                {slide.button.text}
-              </Button>
-            )}
-          </Carousel.Caption>
-        </Carousel.Item>
-      ))}
-    </Carousel>
+      <Carousel indicators={true} controls={true}>
+        {slides.map((slide, index) => (
+          <Carousel.Item key={index}>
+            <img
+              className="d-block w-100"
+              src={slide.image}
+              alt={`Slide ${index + 1}`}
+              style={{ height: "435px", objectFit: "cover" }}
+            />
+            <Carousel.Caption
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                padding: '2.5rem',
+                width: '100%',
+                left: 0,
+                right: 0,
+                bottom: 0,
+              }}
+            >
+              <h3 style={{ color: "black" }}>{slide.title}</h3>
+              <p style={{ color: "black" }}>{slide.text}</p>
+              {slide.button && (
+                <Button variant={slide.button.variant} as={Link} to={slide.button.link}>
+                  {slide.button.text}
+                </Button>
+              )}
+            </Carousel.Caption>
+          </Carousel.Item>
+        ))}
+      </Carousel>
 
       <Container className="mt-5">
         <Row className="text-center">
@@ -116,7 +121,8 @@ function HomePage() {
   );
 }
 
-// Header component with cart counter styled as in DashboardCustomer
+// Updated Header component using NavLink for active link styling
+// In App.js (Header component update)
 function Header() {
   const { user, logout } = useContext(AuthContext);
   const { cart } = useContext(CartContext);
@@ -138,7 +144,7 @@ function Header() {
   return (
     <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
       <Container>
-        <Navbar.Brand as={Link} to="/" className="text-white">
+        <Navbar.Brand as={NavLink} to="/" className="text-white">
           eCommerce
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -149,23 +155,48 @@ function Header() {
                 <span className="navbar-text text-white me-3">
                   Welcome, {user.name}
                 </span>
-                <Nav.Link as={Link} to={dashboardLink}>Products</Nav.Link>
+                <NavLink
+                  to={dashboardLink}
+                  className={({ isActive }) =>
+                    isActive ? 'nav-link active-nav-link' : 'nav-link'
+                  }
+                >
+                  Products
+                </NavLink>
                 {/* Only show Cart link for customers */}
                 {!isEmployee && (
-                  <Button
-                    variant="info"
-                    onClick={() => navigate('/cart')}
-                    className="ms-3"
+                  <NavLink
+                    to="/cart"
+                    className={({ isActive }) =>
+                      isActive ? 'nav-link active-nav-link' : 'nav-link'
+                    }
                   >
                     Cart <Badge bg="secondary">{totalItems}</Badge>
-                  </Button>
+                  </NavLink>
                 )}
-                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                {/* Use a plain Nav.Link (or button) for logout */}
+                <Nav.Link onClick={handleLogout} className="nav-link">
+                  Logout
+                </Nav.Link>
               </>
             ) : (
               <>
-                <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                <Nav.Link as={Link} to="/register">Register</Nav.Link>
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    isActive ? 'nav-link active-nav-link' : 'nav-link'
+                  }
+                >
+                  Login
+                </NavLink>
+                <NavLink
+                  to="/register"
+                  className={({ isActive }) =>
+                    isActive ? 'nav-link active-nav-link' : 'nav-link'
+                  }
+                >
+                  Register
+                </NavLink>
               </>
             )}
           </Nav>
@@ -175,7 +206,7 @@ function Header() {
   );
 }
 
-// Footer component to display at the bottom of every page
+// Footer component
 function Footer() {
   return (
     <footer className="bg-dark text-light mt-5 p-4 text-center">
@@ -186,7 +217,7 @@ function Footer() {
   );
 }
 
-// Main App component wrapped in AuthProvider and CartProvider with flex styling to push footer down
+// Main App component
 function App() {
   return (
     <AuthProvider>
@@ -199,7 +230,6 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
-                {/* Routes for dashboards */}
                 <Route path="/DashboardCustomer" element={<DashboardCustomer />} />
                 <Route path="/DashboardEmployee" element={<DashboardEmployee />} />
                 <Route path="/cart" element={<Cart />} />

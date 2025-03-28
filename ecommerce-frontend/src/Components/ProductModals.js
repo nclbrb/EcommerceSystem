@@ -62,16 +62,16 @@ export const AddProductModal = ({
             />
           </Form.Group>
           <Form.Group controlId="formProductImage" className="mb-3">
-            <Form.Label>Image URL</Form.Label>
+            <Form.Label>Product Image</Form.Label>
             <Form.Control
-              type="text"
-              value={newProduct.image || ''}
+              type="file"
               onChange={(e) =>
-                setNewProduct({ ...newProduct, image: e.target.value })
+                setNewProduct({ ...newProduct, imageFile: e.target.files[0] })
               }
+              accept="image/*"
             />
             <Form.Text className="text-muted">
-              Leave blank to use the default image.
+              Upload an image. It will be stored in <code>/public/images/</code>.
             </Form.Text>
           </Form.Group>
         </Form>
@@ -148,16 +148,16 @@ export const EditProductModal = ({
             />
           </Form.Group>
           <Form.Group controlId="editProductImage" className="mb-3">
-            <Form.Label>Image URL</Form.Label>
+            <Form.Label>Product Image</Form.Label>
             <Form.Control
-              type="text"
-              value={editProduct.image || ''}
+              type="file"
               onChange={(e) =>
-                setEditProduct({ ...editProduct, image: e.target.value })
+                setEditProduct({ ...editProduct, imageFile: e.target.files[0] })
               }
+              accept="image/*"
             />
             <Form.Text className="text-muted">
-              Leave blank to use the default image.
+              Upload a new image if you want to change it.
             </Form.Text>
           </Form.Group>
         </Form>

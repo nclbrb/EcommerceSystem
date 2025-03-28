@@ -21,14 +21,22 @@ class ProductController extends Controller
             'name'        => 'required|string|max:255',
             'description' => 'required|string',
             'price'       => 'required|numeric|min:0',
-            // Make stock optional and default to 0 if not provided.
-            'stock'       => 'sometimes|integer|min:0',
-            'image'       => 'nullable|string',
+            'stock'       => 'required|integer|min:0',
+            'image'       => 'nullable|image|max:2048', // Validate the image file if provided
         ]);
 
-        // Set default stock if not provided
-        if (!isset($validated['stock'])) {
-            $validated['stock'] = 0;
+        // Check if an image file was uploaded
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            // Generate a unique file name (using current timestamp)
+            $filename = time() . '_' . $file->getClientOriginalName();
+            // Move the file to public/images directory
+            $file->move(public_path('images'), $filename);
+            // Store the file path relative to public folder
+            $validated['image'] = '/images/' . $filename;
+        } else {
+            // Set default image path if no file is uploaded
+            $validated['image'] = '/images/default.png';
         }
 
         $product = Product::create($validated);
@@ -48,10 +56,25 @@ class ProductController extends Controller
             'name'        => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
             'price'       => 'sometimes|required|numeric|min:0',
-            // Make stock optional for updates as well
-            'stock'       => 'sometimes|integer|min:0',
-            'image'       => 'nullable|string',
+            'stock'       => 'sometimes|required|integer|min:0',
+            'image'       => 'nullable|image|max:2048', // Validate the image file if provided
         ]);
+
+        // Check if a new image file is uploaded
+        if ($request->hasFile('image')) {
+            // Delete the old image file if it exists and is not the default image
+            if ($product->image && $product->image != '/images/default.png') {
+                $oldImagePath = public_path($product->image);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images'), $filename);
+            $validated['image'] = '/images/' . $filename;
+        }
 
         $product->update($validated);
         return response()->json($product);
@@ -60,17 +83,26 @@ class ProductController extends Controller
     // DELETE /products/{product} - Delete a product
     public function destroy(Product $product)
     {
-        // Uncomment or adjust this check if needed.
+        // Optionally prevent deletion if product is associated with any orders
         // if ($product->orders()->exists()) {
         //     return response()->json([
         //         'error' => 'Product cannot be deleted because it’s already in an order.'
         //     ], 403);
         // }
 
+        // Delete the image file if exists and it's not the default image
+        if ($product->image && $product->image != '/images/default.png') {
+            $imagePath = public_path($product->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
         $product->delete();
         return response()->json(null, 204);
     }
 
+    // GET /products/search - Search for products by name or description
     public function search(Request $request)
     {
         $query = $request->input('query');

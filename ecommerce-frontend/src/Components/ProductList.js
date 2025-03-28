@@ -80,12 +80,12 @@ const ProductList = () => {
           <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={product.id}>
             <div className="card product-card border-0 shadow-sm">
               <div className="overflow-hidden" style={{ height: '200px' }}>
-                <img
-                  src={product.image || '/images/default.png'}
-                  alt={product.name}
-                  className="card-img-top"
-                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                />
+              <img
+  src={`http://127.0.0.1:8000${product.image || '/images/default.png'}`}
+  alt={product.name}
+  className="card-img-top"
+  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+/>
               </div>
               <div className="card-body">
                 <h5 className="card-title">{product.name}</h5>
