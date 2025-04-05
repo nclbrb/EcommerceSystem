@@ -7,31 +7,26 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\EnsureEmployee;
 
-// Public Routes
-
 // Browse products
 Route::get('products', [ProductController::class, 'index']);
 
 // Search for products
 Route::get('search-products', [CartController::class, 'searchProducts']);
 
-
-// Authentication Routes
+/* Authentication Routes/Endpoints for user registration and login to issue Sanctum tokens.*/
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
-// Customer Routes (Authenticated)
+/*Customer Routes (Authenticated)*/
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('cart/add', [CartController::class, 'addToCart']);
     Route::get('cart', [CartController::class, 'viewCart']);
-    
-    //Use OrderController for checkout
     Route::post('cart/checkout', [OrderController::class, 'checkout']);
 });
 
-// Employee Routes (Authenticated & Employee Role)
+/*Employee Routes (Authenticated & Employee Role)*/
 Route::middleware(['auth:sanctum', EnsureEmployee::class])->group(function () {
-    // Product Management - Create, Update, Delete
+    // Product Management (Create, Update, Delete). The index route is public.
     Route::apiResource('products', ProductController::class)->except(['index', 'show']);
 
     // Checkout Monitoring

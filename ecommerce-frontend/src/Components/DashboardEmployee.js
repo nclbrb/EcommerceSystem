@@ -1,3 +1,4 @@
+// src/Components/DashboardEmployee.js
 import React, { useState, useEffect, useMemo } from 'react';
 import { Container, Table, Button, Spinner, Alert, Form, Modal, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
@@ -185,7 +186,7 @@ const DashboardEmployee = () => {
       price: product.price,
       description: product.description,
       stock: product.stock,
-      imageFile: null,
+      imageFile: null, // New file to be uploaded if needed
     });
     setShowEditModal(true);
   };
@@ -209,7 +210,7 @@ const DashboardEmployee = () => {
 
   return (
     <Container className="mt-4">
-      <h3>Employee Dashboard</h3>
+      <h2 style={{ textAlign: 'center' }}>Employee Dashboard</h2>
 
       {/* Orders Section */}
       <section className="mt-5">
@@ -245,48 +246,50 @@ const DashboardEmployee = () => {
         ) : ordersError ? (
           <Alert variant="danger">{ordersError}</Alert>
         ) : (
-          <Table striped bordered hover responsive>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Product Name</th>
-                <th>Customer</th>
-                <th>Total Price</th>
-                <th>Status</th>
-                <th>Created At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => {
-                const productNames =
-                  order.order_details && order.order_details.length
-                    ? order.order_details
-                        .map((detail) =>
-                          detail.product && detail.product.name
-                            ? detail.product.name
-                            : `Unknown (ID: ${detail.product_id})`
-                        )
-                        .join(', ')
-                    : 'N/A';
+          // Wrap the table in a div to enable scrolling
+          <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+            <Table striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Product Name</th>
+                  <th>Customer</th>
+                  <th>Total Price</th>
+                  <th>Status</th>
+                  <th>Created At</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => {
+                  const productNames =
+                    order.order_details && order.order_details.length
+                      ? order.order_details
+                          .map((detail) =>
+                            detail.product && detail.product.name
+                              ? detail.product.name
+                              : `Unknown (ID: ${detail.product_id})`
+                          )
+                          .join(', ')
+                      : 'N/A';
 
-                return (
-                  <tr key={order.id}>
-                    <td>{order.id}</td>
-                    <td>{productNames}</td>
-                    <td>{order.customer_name || (order.user && order.user.name) || 'N/A'}</td>
-                    <td>${parseFloat(order.total_price).toFixed(2)}</td>
-                    <td>{order.status}</td>
-                    <td>{new Date(order.created_at).toLocaleString()}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+                  return (
+                    <tr key={order.id}>
+                      <td>{order.id}</td>
+                      <td>{productNames}</td>
+                      <td>{order.customer_name || (order.user && order.user.name) || 'N/A'}</td>
+                      <td>${parseFloat(order.total_price).toFixed(2)}</td>
+                      <td>{order.status}</td>
+                      <td>{new Date(order.created_at).toLocaleString()}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
         )}
       </section>
 
-      {
-      }
+      {/* Product Management Section */}
       <section className="mt-5">
         <h4>Product Management</h4>
         <Button variant="success" onClick={() => setShowAddModal(true)}>
@@ -301,43 +304,44 @@ const DashboardEmployee = () => {
         ) : productsError ? (
           <Alert variant="danger">{productsError}</Alert>
         ) : (
-          <Table striped bordered hover responsive className="mt-3">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Description</th>
-                <th>Stock</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((prod) => (
-                <tr key={prod.id}>
-                  <td>{prod.id}</td>
-                  <td>{prod.name}</td>
-                  <td>${parseFloat(prod.price).toFixed(2)}</td>
-                  <td>{prod.description}</td>
-                  <td>{prod.stock}</td>
-                  <td>
-                    <Button variant="warning" size="sm" onClick={() => openEditModal(prod)}>
-                      Edit
-                    </Button>{' '}
-                    <Button variant="danger" size="sm" onClick={() => handleDeleteProduct(prod.id)}>
-                      Delete
-                    </Button>
-                  </td>
+          // Wrap the table in a div to enable scrolling
+          <div style={{ maxHeight: '400px', overflowY: 'auto' }} className="mt-3">
+            <Table striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Description</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {products.map((prod) => (
+                  <tr key={prod.id}>
+                    <td>{prod.id}</td>
+                    <td>{prod.name}</td>
+                    <td>${parseFloat(prod.price).toFixed(2)}</td>
+                    <td>{prod.description}</td>
+                    <td>{prod.stock}</td>
+                    <td>
+                      <Button variant="warning" size="sm" onClick={() => openEditModal(prod)}>
+                        Edit
+                      </Button>{' '}
+                      <Button variant="danger" size="sm" onClick={() => handleDeleteProduct(prod.id)}>
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
         )}
       </section>
 
-      {
-      // Modals
-      }
+      {/* Modals */}
       <AddProductModal
         show={showAddModal}
         handleClose={() => setShowAddModal(false)}
