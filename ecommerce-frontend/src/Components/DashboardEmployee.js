@@ -133,36 +133,48 @@ const DashboardEmployee = () => {
   };
 
   // Handler to update an existing product using FormData
-  const handleEditProduct = () => {
-    if (!editingProduct) return;
-    const formData = new FormData();
-    formData.append('name', editProduct.name);
-    formData.append('price', editProduct.price);
-    formData.append('description', editProduct.description);
-    formData.append('stock', editProduct.stock);
-    if (editProduct.imageFile) {
-      formData.append('image', editProduct.imageFile);
-    }
+// Inside DashboardEmployee.js
 
-    axios
-      .put(`http://127.0.0.1:8000/api/products/${editingProduct.id}`, formData, {
+const handleEditProduct = () => {
+  if (!editingProduct) return;
+
+  const productId = editingProduct.id;
+  const formData = new FormData();
+  formData.append('name', editProduct.name);
+  formData.append('price', editProduct.price);
+  formData.append('description', editProduct.description);
+  formData.append('stock', editProduct.stock);
+  if (editProduct.imageFile) {
+    formData.append('image', editProduct.imageFile);
+  }
+
+  // Close modal immediately
+  setShowEditModal(false);
+
+  axios
+    .post( // Laravel expects POST + _method=PUT for file uploads
+      `http://127.0.0.1:8000/api/products/${productId}`,
+      (() => {
+        formData.append('_method', 'PUT');
+        return formData;
+      })(),
+      {
         ...config,
-        headers: {
-          ...config.headers,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then(() => {
-        fetchProducts();
-        setShowEditModal(false);
-        setEditingProduct(null);
-        setEditProduct({ name: '', price: '', description: '', stock: '', imageFile: null });
-      })
-      .catch((error) => {
-        console.error('Error updating product:', error.response || error);
-        alert('Failed to update product.');
-      });
-  };
+        headers: { ...config.headers, 'Content-Type': 'multipart/form-data' },
+      }
+    )
+    .then(() => {
+      // After successful update, re-fetch products
+      fetchProducts();
+      // Clear editing state
+      setEditingProduct(null);
+      setEditProduct({ name: '', price: '', description: '', stock: '', imageFile: null });
+    })
+    .catch(err => {
+      console.error('Error updating product:', err.response || err);
+      alert('Failed to update product.');
+    });
+};
 
   // Handler to delete a product
   const handleDeleteProduct = (productId) => {
