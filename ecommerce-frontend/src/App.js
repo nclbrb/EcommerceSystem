@@ -1,14 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import React, { useContext } from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  NavLink,
-  Link,
-  useNavigate,
-  Navigate
-} from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, NavLink, Link, useNavigate, Navigate } from 'react-router-dom';
 import { Navbar, Nav, Container, Carousel, Button, Row, Col, Card, Badge } from 'react-bootstrap';
 import LoginPage from './Components/LoginPage';
 import RegisterPage from './Components/RegisterPage';
@@ -139,9 +132,10 @@ function Header() {
   const dashboardLink = isEmployee ? '/DashboardEmployee' : '/DashboardCustomer';
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
+    <Navbar className="custom-bg" expand="lg" sticky="top">
       <Container>
-        <Navbar.Brand as={NavLink} to="/" className="text-white">
+        <Navbar.Brand as={NavLink} to="/" className="custom-text-light">
+          <i className="fa-solid fa-store me-2"></i>
           Online Shop
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -149,7 +143,7 @@ function Header() {
           <Nav className="ms-auto align-items-center">
             {user ? (
               <>
-                <span className="navbar-text text-white me-3">
+                <span className="navbar-text custom-text-light me-3">
                   Welcome, {user.name}
                 </span>
                 <NavLink
@@ -160,8 +154,6 @@ function Header() {
                 >
                   Products
                 </NavLink>
-                {
-                }
                 {!isEmployee && (
                   <NavLink
                     to="/cart"
@@ -172,8 +164,6 @@ function Header() {
                     Cart <Badge bg="secondary">{totalItems}</Badge>
                   </NavLink>
                 )}
-                {
-                }
                 <Nav.Link onClick={handleLogout} className="nav-link">
                   Logout
                 </Nav.Link>
@@ -208,7 +198,7 @@ function Header() {
 // Footer component
 function Footer() {
   return (
-    <footer className="bg-dark text-light mt-5 p-4 text-center">
+    <footer className="custom-bg text-light mt-5 p-4 text-center">
       <Container>
         <p>&copy; {new Date().getFullYear()} Online Shop. All Rights Reserved.</p>
       </Container>

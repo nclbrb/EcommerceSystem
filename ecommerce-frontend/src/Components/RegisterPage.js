@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Form, Button, Alert, Card, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import '../App.css';
 
 function RegisterPage() {
   const [name, setName]                           = useState('');
@@ -38,10 +39,10 @@ function RegisterPage() {
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '75.6vh' }}>
+    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '70vh', marginTop: '40px'  }}>
       <Row className="w-100 justify-content-center">
         <Col md={7} lg={5}>
-          <Card className="shadow border-0">
+          <Card className="shadow border-2">
             <Card.Body>
               <h2 className="text-center mb-4">Register</h2>
               {message && <Alert variant={variant}>{message}</Alert>}
@@ -86,16 +87,16 @@ function RegisterPage() {
                     required
                   />
                 </Form.Group>
-                <Button variant="success" type="submit" className="w-100 py-2">
+                <Button className="w-100 py-2 reg-btn" type="submit">
                   Register
-                </Button>
+               </Button>
               </Form>
             </Card.Body>
           </Card>
           <div className="text-center mt-3">
-            <small>
+            <medium>
               Already have an account? <Link to="/login">Login here</Link>
-            </small>
+            </medium>
           </div>
         </Col>
       </Row>

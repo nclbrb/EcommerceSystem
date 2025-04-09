@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Container, Table, Button, Spinner, Alert, Form, Modal, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { AddProductModal, EditProductModal } from './ProductModals';
+import '../App.css';
 
 const DashboardEmployee = () => {
   // Retrieve token from localStorage
@@ -228,10 +229,10 @@ const DashboardEmployee = () => {
               </Form.Group>
             </Col>
             <Col md={4} className="d-flex align-items-end">
-              <Button variant="primary" onClick={handleFilterOrders} className="me-2">
+            <Button onClick={handleFilterOrders} className="btn-filter me-2">
                 Filter
               </Button>
-              <Button variant="secondary" onClick={handleResetFilter}>
+              <Button onClick={handleResetFilter} className="btn-reset">
                 Reset
               </Button>
             </Col>
@@ -292,7 +293,7 @@ const DashboardEmployee = () => {
       {/* Product Management Section */}
       <section className="mt-5">
         <h4>Product Management</h4>
-        <Button variant="success" onClick={() => setShowAddModal(true)}>
+        <Button className="btn-add" variant="success" onClick={() => setShowAddModal(true)}>
           Add Product
         </Button>
         {loadingProducts ? (
@@ -326,12 +327,12 @@ const DashboardEmployee = () => {
                     <td>{prod.description}</td>
                     <td>{prod.stock}</td>
                     <td>
-                      <Button variant="warning" size="sm" onClick={() => openEditModal(prod)}>
-                        Edit
-                      </Button>{' '}
-                      <Button variant="danger" size="sm" onClick={() => handleDeleteProduct(prod.id)}>
-                        Delete
-                      </Button>
+                    <Button size="sm" onClick={() => openEditModal(prod)} className="btn-edit">
+                      Edit
+                    </Button>{' '}
+                    <Button size="sm" onClick={() => handleDeleteProduct(prod.id)} className="btn-delete">
+                      Delete
+                    </Button>
                     </td>
                   </tr>
                 ))}

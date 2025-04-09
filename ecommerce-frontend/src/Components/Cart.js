@@ -35,10 +35,14 @@ const Cart = () => {
           <Card.Body className="d-flex justify-content-between align-items-center">
             <h4 className="mb-0">Total Price: ${formattedTotalPrice}</h4>
             <div>
-              <Button variant="warning" className="me-3" onClick={clearCart}>
+              <Button 
+                variant="outline-primary" 
+                className="me-3 custom-outline-btn" 
+                onClick={clearCart}
+              >
                 Clear Cart
               </Button>
-              <Link to="/checkout" className="btn btn-primary">
+              <Link to="/checkout" className="btn custom-outline-btn">
                 Proceed to Checkout
               </Link>
             </div>
@@ -54,16 +58,16 @@ const Cart = () => {
             <Col key={product.id} lg={3} md={4} sm={6} className="mb-4">
               <Card className="shadow-sm product-card h-100">
                 <div style={{ height: '200px', overflow: 'hidden' }}>
-                <Card.Img
-                variant="top"
-                src={
-                product.image && product.image.trim() !== ''
-                ? `http://127.0.0.1:8000${product.image}`
-                : 'http://127.0.0.1:8000/images/default.png'
-                }
-                 alt={product.name}
-                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                 />
+                  <Card.Img
+                    variant="top"
+                    src={
+                      product.image && product.image.trim() !== ''
+                        ? `http://127.0.0.1:8000${product.image}`
+                        : 'http://127.0.0.1:8000/images/default.png'
+                    }
+                    alt={product.name}
+                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                  />
                 </div>
                 <Card.Body className="d-flex flex-column">
                   <Card.Title>{product.name}</Card.Title>
@@ -72,7 +76,10 @@ const Cart = () => {
                     <span className="fw-bold">
                       ${parseFloat(product.price).toFixed(2)}
                     </span>
-                    <span className="badge bg-success">Stock: {product.stock}</span>
+                    {/* Apply the custom badge style */}
+                    <span className="badge custom-badge">
+                      Stock: {product.stock}
+                    </span>
                   </div>
                   <div className="mt-2">
                     <Form.Label className="small">Quantity:</Form.Label>
@@ -92,9 +99,9 @@ const Cart = () => {
                 </Card.Body>
                 <Card.Footer className="bg-transparent border-0">
                   <Button
-                    variant="danger"
+                    variant="outline-primary"
                     size="sm"
-                    className="w-100"
+                    className="w-100 custom-outline-btn"
                     onClick={() => handleRemoveFromCart(product.id)}
                   >
                     Remove from Cart

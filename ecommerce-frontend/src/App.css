@@ -1,21 +1,12 @@
 /* Arrow Controls: Make the arrows orange */
 body {
   font-family: 'Outfit';
+  background-color: #fef9f5;
 }
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
   filter: brightness(0) saturate(100%) invert(39%) sepia(95%) saturate(3594%) hue-rotate(4deg) brightness(95%) contrast(107%);
-}
-
-/* Slide Indicators: Make all indicators orange */
-.carousel-indicators [data-bs-target] {
-  background-color: orange;
-}
-
-/* Ensure the active indicator is clearly visible */
-.carousel-indicators .active {
-  background-color: orange;
 }
 
 /* Ensure the html and body use full height */
@@ -47,6 +38,65 @@ footer {
 
 /* Blue underline */
 .active-nav-link {
-  border-bottom: 2px solid #007bff; 
+  border-bottom: 2px solid #ffffff; 
   font-weight: bold;
 }
+
+.custom-bg {
+  background-color: #e86100 !important;
+}
+
+/* Optional: adjust text colors if needed */
+.custom-text-light {
+  color: #fff !important;
+}
+
+/* Custom styling for outline buttons using #e86100 */
+.custom-outline-btn {
+  border-color: #e86100 !important;
+  color: #e86100 !important;
+  background-color: transparent;
+}
+
+.custom-outline-btn:hover,
+.custom-outline-btn:focus,
+.custom-outline-btn:active,
+.custom-outline-btn.active {
+  background-color: #e86100 !important;
+  color: #fff !important;
+  border-color: #e86100 !important;
+}
+
+/* Custom styling for badges using #e86100 */
+.custom-badge {
+  background-color: #e86100 !important;
+}
+
+/* Login/reg CSS */
+.login-btn, .reg-btn {
+  background-color: #e86100 !important;
+  border-color: #e86100 !important;
+  color: #fff !important;
+  transition: background-color 0.2s ease;
+}
+
+.login-btn, .reg-btn:hover,
+.login-btn, .reg-btn:focus {
+  background-color: #cf5800 !important;
+  border-color: #cf5800 !important;
+}
+
+/* Shared button styles */
+.btn-filter, .btn-reset, .btn-edit, .btn-delete, .btn-add, .btn-primary, .btn-success, .btn-info
+.btn-add-product {
+  background-color: #e86100 !important;
+  border-color: #e86100 !important;
+  color: #fff !important;
+}
+
+.btn-filter:hover, .btn-reset:hover, .btn-edit:hover, .btn-delete:hover, .btn-add:hover, 
+.btn-primary:hover, .btn-success:hover, .btn-info:hover {
+  background-color: #d75700 !important;
+  border-color: #d75700 !important;
+}
+
