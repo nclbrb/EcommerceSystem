@@ -1,34 +1,35 @@
 import React, { useState, useContext } from 'react';
-import { Container, Form, Button, Alert, Card, Row, Col } from 'react-bootstrap';
+import '../App.css';
+import { Container, Form, Button, Alert, Card, Row, Col, InputGroup } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 function LoginPage() {
-  const [email, setEmail]       = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage]   = useState(null);
-  const [variant, setVariant]   = useState('');
-  const { login }               = useContext(AuthContext);
-  const navigate                = useNavigate();
+  const [email, setEmail]             = useState('');
+  const [password, setPassword]       = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage]         = useState(null);
+  const [variant, setVariant]         = useState('');
+  const { login }                     = useContext(AuthContext);
+  const navigate                      = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/login', { email, password });
-      
-      // Assume the API returns a user object with a "role" property
-      const user = response.data.user;
+      const user  = response.data.user;
       const token = response.data.token;
-      
+
       login(user, token);
       setMessage(response.data.message);
       setVariant('success');
-      
-      // Redirect based on user role
-      if(user.role === 'employee') {
+
+      if (user.role === 'employee') {
         navigate('/DashboardEmployee');
-      } else {  // Default to customer
+      } else {
         navigate('/DashboardCustomer');
       }
     } catch (error) {
@@ -39,13 +40,10 @@ function LoginPage() {
   };
 
   return (
-    <Container
-      className="d-flex align-items-center justify-content-center"
-      style={{ minHeight: '75vh' }}
-    >
+    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '75vh' }}>
       <Row className="w-100 justify-content-center">
         <Col md={8} lg={4}>
-          <Card className="shadow border-0 login-card">
+          <Card className="shadow border-2 login-card">
             <Card.Body>
               <h2 className="text-center mb-4">Login</h2>
               {message && <Alert variant={variant}>{message}</Alert>}
@@ -60,26 +58,36 @@ function LoginPage() {
                     required
                   />
                 </Form.Group>
+
                 <Form.Group controlId="loginPassword" className="mb-4">
                   <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <InputGroup>
+                    <Form.Control
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{ borderLeft: 'none' }}
+                    >
+                      <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                    </Button>
+                  </InputGroup>
                 </Form.Group>
-                <Button variant="primary" type="submit" className="w-100 py-2">
+                <Button className="w-100 py-2 login-btn" type="submit">
                   Login
                 </Button>
               </Form>
             </Card.Body>
           </Card>
           <div className="text-center mt-3">
-            <small>
+            <medium>
               Don't have an account? <Link to="/register">Register here</Link>
-            </small>
+            </medium>
           </div>
         </Col>
       </Row>

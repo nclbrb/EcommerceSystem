@@ -1,7 +1,9 @@
+// src/Components/DashboardEmployee.js
 import React, { useState, useEffect, useMemo } from 'react';
 import { Container, Table, Button, Spinner, Alert, Form, Modal, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { AddProductModal, EditProductModal } from './ProductModals';
+import '../App.css';
 
 const DashboardEmployee = () => {
   // Retrieve token from localStorage
@@ -131,36 +133,48 @@ const DashboardEmployee = () => {
   };
 
   // Handler to update an existing product using FormData
-  const handleEditProduct = () => {
-    if (!editingProduct) return;
-    const formData = new FormData();
-    formData.append('name', editProduct.name);
-    formData.append('price', editProduct.price);
-    formData.append('description', editProduct.description);
-    formData.append('stock', editProduct.stock);
-    if (editProduct.imageFile) {
-      formData.append('image', editProduct.imageFile);
-    }
+// Inside DashboardEmployee.js
 
-    axios
-      .put(`http://127.0.0.1:8000/api/products/${editingProduct.id}`, formData, {
+const handleEditProduct = () => {
+  if (!editingProduct) return;
+
+  const productId = editingProduct.id;
+  const formData = new FormData();
+  formData.append('name', editProduct.name);
+  formData.append('price', editProduct.price);
+  formData.append('description', editProduct.description);
+  formData.append('stock', editProduct.stock);
+  if (editProduct.imageFile) {
+    formData.append('image', editProduct.imageFile);
+  }
+
+  // Close modal immediately
+  setShowEditModal(false);
+
+  axios
+    .post( // Laravel expects POST + _method=PUT for file uploads
+      `http://127.0.0.1:8000/api/products/${productId}`,
+      (() => {
+        formData.append('_method', 'PUT');
+        return formData;
+      })(),
+      {
         ...config,
-        headers: {
-          ...config.headers,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then(() => {
-        fetchProducts();
-        setShowEditModal(false);
-        setEditingProduct(null);
-        setEditProduct({ name: '', price: '', description: '', stock: '', imageFile: null });
-      })
-      .catch((error) => {
-        console.error('Error updating product:', error.response || error);
-        alert('Failed to update product.');
-      });
-  };
+        headers: { ...config.headers, 'Content-Type': 'multipart/form-data' },
+      }
+    )
+    .then(() => {
+      // After successful update, re-fetch products
+      fetchProducts();
+      // Clear editing state
+      setEditingProduct(null);
+      setEditProduct({ name: '', price: '', description: '', stock: '', imageFile: null });
+    })
+    .catch(err => {
+      console.error('Error updating product:', err.response || err);
+      alert('Failed to update product.');
+    });
+};
 
   // Handler to delete a product
   const handleDeleteProduct = (productId) => {
@@ -185,7 +199,7 @@ const DashboardEmployee = () => {
       price: product.price,
       description: product.description,
       stock: product.stock,
-      imageFile: null,
+      imageFile: null, // New file to be uploaded if needed
     });
     setShowEditModal(true);
   };
@@ -209,7 +223,7 @@ const DashboardEmployee = () => {
 
   return (
     <Container className="mt-4">
-      <h3>Employee Dashboard</h3>
+      <h2 style={{ textAlign: 'center' }}>Employee Dashboard</h2>
 
       {/* Orders Section */}
       <section className="mt-5">
@@ -227,10 +241,10 @@ const DashboardEmployee = () => {
               </Form.Group>
             </Col>
             <Col md={4} className="d-flex align-items-end">
-              <Button variant="primary" onClick={handleFilterOrders} className="me-2">
+            <Button onClick={handleFilterOrders} className="btn-filter me-2">
                 Filter
               </Button>
-              <Button variant="secondary" onClick={handleResetFilter}>
+              <Button onClick={handleResetFilter} className="btn-reset">
                 Reset
               </Button>
             </Col>
@@ -245,51 +259,53 @@ const DashboardEmployee = () => {
         ) : ordersError ? (
           <Alert variant="danger">{ordersError}</Alert>
         ) : (
-          <Table striped bordered hover responsive>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Product Name</th>
-                <th>Customer</th>
-                <th>Total Price</th>
-                <th>Status</th>
-                <th>Created At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => {
-                const productNames =
-                  order.order_details && order.order_details.length
-                    ? order.order_details
-                        .map((detail) =>
-                          detail.product && detail.product.name
-                            ? detail.product.name
-                            : `Unknown (ID: ${detail.product_id})`
-                        )
-                        .join(', ')
-                    : 'N/A';
+          // Wrap the table in a div to enable scrolling
+          <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+            <Table striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Product Name</th>
+                  <th>Customer</th>
+                  <th>Total Price</th>
+                  <th>Status</th>
+                  <th>Created At</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => {
+                  const productNames =
+                    order.order_details && order.order_details.length
+                      ? order.order_details
+                          .map((detail) =>
+                            detail.product && detail.product.name
+                              ? detail.product.name
+                              : `Unknown (ID: ${detail.product_id})`
+                          )
+                          .join(', ')
+                      : 'N/A';
 
-                return (
-                  <tr key={order.id}>
-                    <td>{order.id}</td>
-                    <td>{productNames}</td>
-                    <td>{order.customer_name || (order.user && order.user.name) || 'N/A'}</td>
-                    <td>${parseFloat(order.total_price).toFixed(2)}</td>
-                    <td>{order.status}</td>
-                    <td>{new Date(order.created_at).toLocaleString()}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+                  return (
+                    <tr key={order.id}>
+                      <td>{order.id}</td>
+                      <td>{productNames}</td>
+                      <td>{order.customer_name || (order.user && order.user.name) || 'N/A'}</td>
+                      <td>${parseFloat(order.total_price).toFixed(2)}</td>
+                      <td>{order.status}</td>
+                      <td>{new Date(order.created_at).toLocaleString()}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
         )}
       </section>
 
-      {
-      }
+      {/* Product Management Section */}
       <section className="mt-5">
         <h4>Product Management</h4>
-        <Button variant="success" onClick={() => setShowAddModal(true)}>
+        <Button className="btn-add" variant="success" onClick={() => setShowAddModal(true)}>
           Add Product
         </Button>
         {loadingProducts ? (
@@ -301,43 +317,44 @@ const DashboardEmployee = () => {
         ) : productsError ? (
           <Alert variant="danger">{productsError}</Alert>
         ) : (
-          <Table striped bordered hover responsive className="mt-3">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Description</th>
-                <th>Stock</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((prod) => (
-                <tr key={prod.id}>
-                  <td>{prod.id}</td>
-                  <td>{prod.name}</td>
-                  <td>${parseFloat(prod.price).toFixed(2)}</td>
-                  <td>{prod.description}</td>
-                  <td>{prod.stock}</td>
-                  <td>
-                    <Button variant="warning" size="sm" onClick={() => openEditModal(prod)}>
+          // Wrap the table in a div to enable scrolling
+          <div style={{ maxHeight: '400px', overflowY: 'auto' }} className="mt-3">
+            <Table striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Description</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((prod) => (
+                  <tr key={prod.id}>
+                    <td>{prod.id}</td>
+                    <td>{prod.name}</td>
+                    <td>${parseFloat(prod.price).toFixed(2)}</td>
+                    <td>{prod.description}</td>
+                    <td>{prod.stock}</td>
+                    <td>
+                    <Button size="sm" onClick={() => openEditModal(prod)} className="btn-edit">
                       Edit
                     </Button>{' '}
-                    <Button variant="danger" size="sm" onClick={() => handleDeleteProduct(prod.id)}>
+                    <Button size="sm" onClick={() => handleDeleteProduct(prod.id)} className="btn-delete">
                       Delete
                     </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
         )}
       </section>
 
-      {
-      // Modals
-      }
+      {/* Modals */}
       <AddProductModal
         show={showAddModal}
         handleClose={() => setShowAddModal(false)}
