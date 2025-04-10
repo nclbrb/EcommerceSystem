@@ -109,13 +109,13 @@ const CheckoutPage = () => {
               <ListGroup variant="flush">
                 {Array.isArray(cart) && cart.map((product) => (
                   <ListGroup.Item key={product.id}>
-                    {product.name} - ${product.price} x {product.quantity}
+                    {product.name} - PHP{product.price} x {product.quantity}
                   </ListGroup.Item>
                 ))}
               </ListGroup>
             </Card.Body>
             <Card.Footer className="d-flex justify-content-between align-items-center">
-              <span className="fw-bold">Total: ${formattedTotalPrice}</span>
+              <span className="fw-bold">Total: PHP{formattedTotalPrice}</span>
             </Card.Footer>
           </Card>
         </Col>
