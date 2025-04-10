@@ -33,7 +33,7 @@ const Cart = () => {
       {Array.isArray(cart) && cart.length > 0 && (
         <Card className="mb-4 shadow-sm">
           <Card.Body className="d-flex justify-content-between align-items-center">
-            <h4 className="mb-0">Total Price: ${formattedTotalPrice}</h4>
+            <h4 className="mb-0">Total Price: PHP{formattedTotalPrice}</h4>
             <div>
               <Button 
                 variant="outline-primary" 
@@ -74,7 +74,7 @@ const Cart = () => {
                   <Card.Text className="text-truncate">{product.description}</Card.Text>
                   <div className="d-flex justify-content-between align-items-center">
                     <span className="fw-bold">
-                      ${parseFloat(product.price).toFixed(2)}
+                      PHP{parseFloat(product.price).toFixed(2)}
                     </span>
                     {/* Apply the custom badge style */}
                     <span className="badge custom-badge">
@@ -94,7 +94,7 @@ const Cart = () => {
                     />
                   </div>
                   <Card.Text className="mt-auto">
-                    <strong>Subtotal:</strong> ${(product.price * product.quantity).toFixed(2)}
+                    <strong>Subtotal:</strong> PHP{(product.price * product.quantity).toFixed(2)}
                   </Card.Text>
                 </Card.Body>
                 <Card.Footer className="bg-transparent border-0">

@@ -290,7 +290,7 @@ const handleEditProduct = () => {
                       <td>{order.id}</td>
                       <td>{productNames}</td>
                       <td>{order.customer_name || (order.user && order.user.name) || 'N/A'}</td>
-                      <td>${parseFloat(order.total_price).toFixed(2)}</td>
+                      <td>PHP{parseFloat(order.total_price).toFixed(2)}</td>
                       <td>{order.status}</td>
                       <td>{new Date(order.created_at).toLocaleString()}</td>
                     </tr>
@@ -335,7 +335,7 @@ const handleEditProduct = () => {
                   <tr key={prod.id}>
                     <td>{prod.id}</td>
                     <td>{prod.name}</td>
-                    <td>${parseFloat(prod.price).toFixed(2)}</td>
+                    <td>PHP{parseFloat(prod.price).toFixed(2)}</td>
                     <td>{prod.description}</td>
                     <td>{prod.stock}</td>
                     <td>

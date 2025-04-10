@@ -85,7 +85,7 @@ const DashboardCustomer = () => {
                   </Card.Text>
                   <div className="d-flex justify-content-between align-items-center">
                     <span className="fw-bold">
-                      ${parseFloat(product.price).toFixed(2)}
+                      PHP{parseFloat(product.price).toFixed(2)}
                     </span>
                     {/* Apply the custom badge style */}
                     <span className="badge custom-badge">
